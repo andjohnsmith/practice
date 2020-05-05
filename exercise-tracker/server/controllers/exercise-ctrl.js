@@ -36,7 +36,64 @@ retrieveExercises = async (req, res) => {
   }).catch((err) => console.log(err));
 };
 
+updateExercise = async (req, res) => {
+  const body = req.body;
+
+  if (!body) {
+    return res.status(400).json({
+      success: false,
+      error: 'You must provide a body to update',
+    });
+  }
+
+  Exercise.findOne({ _id: req.params.id }, (err, exercise) => {
+    if (err) {
+      return res.status(404).json({
+        err,
+        message: 'Exercise not found!',
+      });
+    }
+    exercise.username = body.username;
+    exercise.description = body.description;
+    exercise.duration = body.duration;
+    exercise.date = body.date;
+    exercise
+      .save()
+      .then(() => {
+        return res.status(200).json({
+          success: true,
+          id: exercise._id,
+          message: 'Exercise updated!',
+        });
+      })
+      .catch((error) => {
+        return res.status(404).json({
+          error,
+          message: 'Exercise not updated!',
+        });
+      });
+  });
+};
+
+deleteExercise = async (req, res) => {
+  await Exercise.findOneAndDelete({ _id: req.params.id }, (err, exercise) => {
+    if (err) {
+      return res.status(400).json({ success: false, error: err });
+    }
+
+    if (!exercise) {
+      return res
+        .status(404)
+        .json({ success: false, error: `Exercise not found` });
+    }
+
+    return res.status(200).json({ success: true, exercise });
+  }).catch((err) => console.log(err));
+};
+
 module.exports = {
   createExercise,
   retrieveExercises,
+  updateExercise,
+  deleteExercise,
 };

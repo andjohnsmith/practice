@@ -1,3 +1,5 @@
 import ExerciseList from './ExerciseList';
+import ExerciseForm from './ExerciseForm';
+import UserForm from './UserForm';
 
-export { ExerciseList };
+export { ExerciseList, ExerciseForm, UserForm };

@@ -18,7 +18,7 @@ export default class Navbar extends Component {
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <NavLink to="/" className="navbar-brand">
+          <NavLink to="/exercises" className="navbar-brand">
             Exercise Tracker
           </NavLink>
           <button
@@ -37,7 +37,7 @@ export default class Navbar extends Component {
             <ul className="navbar-nav">
               <li className="nav-item">
                 <NavLink
-                  to="/"
+                  to="/exercises"
                   className="nav-link"
                   exact
                   activeClassName="active"
@@ -51,7 +51,7 @@ export default class Navbar extends Component {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink to="/users/" className="nav-link">
+                <NavLink to="/users" className="nav-link">
                   Create a User
                 </NavLink>
               </li>
