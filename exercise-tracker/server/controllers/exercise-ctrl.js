@@ -6,8 +6,7 @@ createExercise = (req, res) => {
   const username = req.body.username;
   const description = req.body.description;
   const duration = Number(req.body.duration);
-  // const date = Date.parse(req.body.date);
-  const date = new Date();
+  const date = Date.parse(req.body.date);
 
   const exercise = new Exercise({ username, description, duration, date });
 
@@ -33,6 +32,15 @@ retrieveExercises = async (req, res) => {
       return res.status(400).json({ success: false, error: err });
     }
     return res.status(200).json({ success: true, exercises });
+  }).catch((err) => console.log(err));
+};
+
+retrieveExerciseById = async (req, res) => {
+  await Exercise.findOne({ _id: req.params.id }, (err, exercise) => {
+    if (err) {
+      return res.status(400).json({ success: false, error: err });
+    }
+    return res.status(200).json({ success: true, exercise });
   }).catch((err) => console.log(err));
 };
 
@@ -94,6 +102,7 @@ deleteExercise = async (req, res) => {
 module.exports = {
   createExercise,
   retrieveExercises,
+  retrieveExerciseById,
   updateExercise,
   deleteExercise,
 };

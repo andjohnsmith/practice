@@ -10,6 +10,7 @@ function App() {
       <Navbar />
       <Route path="/exercises" exact component={ExerciseList} />
       <Route path="/exercises/add" component={ExerciseForm} />
+      <Route path="/exercises/:id/edit" component={ExerciseForm} />
       <Route path="/users" component={UserForm} />
     </Router>
   );

@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import { insertExercise, getAllUsers } from '../api';
+import {
+  insertExercise,
+  updateExercise,
+  getExerciseById,
+  getAllUsers,
+} from '../api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -12,6 +17,7 @@ export default class ExerciseForm extends Component {
       duration: 0,
       date: new Date(),
       users: [],
+      isEdit: false,
     };
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangeDescription = this.onChangeDescription.bind(this);
@@ -21,11 +27,23 @@ export default class ExerciseForm extends Component {
   }
 
   componentDidMount = async () => {
+    const id = this.props.match.params.id;
+    if (id) {
+      await getExerciseById(id).then((res) => {
+        this.setState({
+          username: res.data.exercise.username,
+          description: res.data.exercise.description,
+          duration: res.data.exercise.duration,
+          date: new Date(res.data.exercise.date),
+          isEdit: true,
+        });
+      });
+    }
     await getAllUsers().then((res) => {
       if (res.data.users.length > 0) {
         this.setState({
           users: res.data.users.map((user) => user.username),
-          username: res.data.users[0].username,
+          username: this.state.username || res.data.users[0].username,
         });
       }
     });
@@ -57,29 +75,29 @@ export default class ExerciseForm extends Component {
       date: this.state.date,
     };
 
-    await insertExercise(exercise).then((res) => {
-      this.setState({
-        username: '',
-        description: '',
-        duration: 0,
-        date: new Date(),
-      });
-    });
-
-    window.location = '/exercises';
+    if (this.state.isEdit) {
+      await updateExercise(this.props.match.params.id, exercise).then(
+        () => (window.location = '/exercises'),
+      );
+    } else {
+      await insertExercise(exercise).then(
+        () => (window.location = '/exercises'),
+      );
+    }
   };
 
   render() {
     return (
       <div className="container">
-        <h3>Log New Exercise</h3>
+        <h3>{(this.state.isEdit && 'Edit') || 'Log New'} Exercise</h3>
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <select
               className="custom-select"
               id="username"
-              onChange={this.onUsernameChange}
+              onChange={this.onChangeUsername}
+              value={this.state.username}
             >
               {this.state.users.map((user) => (
                 <option key={user} value={user}>
@@ -120,7 +138,7 @@ export default class ExerciseForm extends Component {
             </div>
           </div>
           <button type="submit" className="btn btn-primary">
-            Log Exercise
+            {(this.state.isEdit && 'Edit') || 'Log'} Exercise
           </button>
         </form>
       </div>
