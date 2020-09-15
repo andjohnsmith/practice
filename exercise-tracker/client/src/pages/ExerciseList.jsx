@@ -56,7 +56,6 @@ export default class ExerciseList extends Component {
   };
 
   deleteExercise = (id) => {
-    console.log(id);
     deleteExerciseById(id);
     this.setState({
       exercises: this.state.exercises.filter((exercise) => exercise._id !== id),

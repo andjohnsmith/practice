@@ -10,26 +10,21 @@ createUser = (req, res) => {
     });
   }
 
-  const username = req.body.username;
-  console.log(req.body);
-  const user = new User({ username });
+  const user = new User({
+    username: req.body.username,
+    password: req.body.password,
+  });
 
-  if (!user) {
-    return res.status(400).json({ success: false, error: err });
-  }
-
-  user
-    .save()
-    .then(() => {
-      return res.status(200).json({
-        success: true,
-        id: user._id,
-        message: 'User created!',
-      });
-    })
-    .catch((error) => {
-      return res.status(400).json({ error, message: 'User not created!' });
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(user.password, salt, (err, hash) => {
+      if (err) throw err;
+      user.password = hash;
+      user
+        .save()
+        .then((user) => res.json(user))
+        .catch((err) => console.log(err));
     });
+  });
 };
 
 retrieveUsers = async (req, res) => {
